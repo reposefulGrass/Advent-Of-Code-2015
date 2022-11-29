@@ -4,7 +4,7 @@ use itertools::Itertools;
 use std::collections::HashMap;
 
 fn main() {
-    let input_a = include_str!("../input/test.txt");
+    let input_a = include_str!("../input/a.txt");
 
     part_a(input_a);
 }
@@ -20,7 +20,7 @@ fn part_a(input: &str) {
     let mut shortest_path: Vec<&String> = vec![];
     let mut shortest_distance = 0;
 
-'permutations:
+'permutation:
     for comb in city_set.iter().permutations(city_set.len()) {
         //println!("{:?}", comb);
 
@@ -30,9 +30,11 @@ fn part_a(input: &str) {
             if let Some(d) = city_map.get(&path) {
                 distance += d;
             } else {
-                continue 'permutations;
+                continue 'permutation;
             }
         }
+
+        println!("{:?} -> {}", comb, distance);
 
         if  shortest_distance == 0 || distance < shortest_distance {
             shortest_distance = distance;
