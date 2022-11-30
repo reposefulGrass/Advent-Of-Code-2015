@@ -24,34 +24,64 @@ fn part_b (input: &str) {
 
 fn look_and_say (input: &str) -> String {
     let mut output = String::from("");
-    let mut index = 0;
-    while index < input.len() {
-        let (character, length) = get_char_length(&input[index..]);
-        output.push_str(&length.to_string());
-        output.push_str(&character.to_string());
-
-        index += length;
+    
+    for group in group(input) {
+        output.push_str(&group.len().to_string());
+        output.push(group.chars().nth(0).unwrap());
     }
 
     output
 }
 
-fn get_char_length (input: &str) -> (char, usize) {
+fn group<'a> (input: &'a str) -> Vec<&'a str> {
+    let mut groups = vec![];
+    let mut index = 0;
+
+    while index < input.len() {
+        let len = get_char_length(&input[index..]);
+        groups.push(&input[index..index+len]);
+        index += len;
+    }
+
+    groups
+}
+
+fn get_char_length (input: &str) -> usize {
     let head = input.chars().nth(0).unwrap();
     let mut len = 1;
 
     loop {
-        match input.chars().nth(len) {
-            Some(character) => {
-                if character == head {
-                    len += 1;
-                } else {
-                    break;
-                }
-            },
-            None => break,
+        if let Some(character) = input.chars().nth(len) {
+            if character == head {
+                len += 1;
+            } else {
+                break;
+            }
+        } else {
+            break;
         }
     }
 
-    (head, len)
+    len
+}
+
+#[test]
+fn test_group_1 () {
+    let empty_vec: Vec<String> = vec![];
+    assert_eq!(group(""), empty_vec);
+}
+
+#[test]
+fn test_group_2 () {
+    assert_eq!(group("1"), vec!["1"]);
+}
+
+#[test]
+fn test_group_3 () {
+    assert_eq!(group("111221"), vec!["111", "22", "1"]);
+}
+
+#[test]
+fn test_look_and_say () {
+    assert_eq!(look_and_say("111221"), String::from("312211"));
 }
